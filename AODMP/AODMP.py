@@ -8,11 +8,11 @@ def aodmp(graph: List[List[int]], od_pairs: List[List[int]], max_extra_steps: in
 
     Args:
         graph: 邻接矩阵表示的图结构，graph[i][j]=1表示存在i->j的边
-        od_pairs: OD对列表，每个元素为[origin, destination]格式
+        od_pairs: OD对列表，每个元素为[origin, destination]格式,节点编号从1开始
         max_extra_steps: 允许相比最短路径增加的最大路段数
 
     Returns:
-        所有满足长度约束的有效路径集合，按OD对顺序排列
+        所有满足长度约束的有效路径集合，按OD对顺序排列，路径中的节点编号从1开始
     """
     all_valid_paths = []
 
@@ -46,6 +46,6 @@ if __name__ == '__main__':
         [0, 1, 0, 1],
         [0, 0, 0, 0]
     ]
-    od_pairs = [[0, 3], [1, 3], [2, 1], [0, 2]]
+    od_pairs = [[1, 4], [2, 4], [3, 2], [1, 3]]
     print(aodmp(graph, od_pairs, 1))
     # [[0, 1, 3], [0, 2, 3], [0, 2, 1, 3], [1, 3], [2, 1], [0, 2]] 的路径组合
