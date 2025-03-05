@@ -4,7 +4,7 @@
 # OD=[1 3;2 4;3 2;1 4];
 # M=1;
 # ALLOD3path=AODMP(Graph,OD,M);
-from AODMP import aodmp
+from AODMP.AODMP import aodmp
 
 Graph = [
     [0, 1, 1, 0],

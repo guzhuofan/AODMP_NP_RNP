@@ -17,8 +17,11 @@ def RNP(n, path, W):
     for combo in combinations(valid_subpaths, n):
         if is_independent(combo):
             sorted_combo = sorted(combo, key=lambda x: x['start'])
+            # 给combo列表中的字典按start值从小到大排序,为sorted_combo列表
             valid_combos.append([tuple(sp['edges']) for sp in sorted_combo])
-
+            # 将一组没有公共链路的(子路径元组,子路径元组中每个小元组代表一条弧)
+            # 构成一个列表,将列表添加到valid_combos列表中
+            # 一个列表代表一种子路径组合
     return valid_combos
 
 
@@ -31,9 +34,10 @@ def generate_valid_subpaths(path, W):
             od = (path[start], path[end])
             if od in W_set:
                 edges = [(path[i], path[i + 1]) for i in range(start, end)]
+                # 将每个P上的子路径分为一段段弧,每个弧是(s,t)的元组,元组构成的列表就是这条子路径
                 subpaths.append({
-                    'edges': edges,
-                    'edges_set': set(edges),
+                    'edges': edges, # 弧元组组成的列表
+                    'edges_set': set(edges), # 弧元组组成的集合
                     'start': start  # 用于结果排序
                 })
     return subpaths
