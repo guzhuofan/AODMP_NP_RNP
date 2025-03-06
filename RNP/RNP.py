@@ -19,7 +19,7 @@ def RNP(n, path, W):
             sorted_combo = sorted(combo, key=lambda x: x['start'])
             # 给combo列表中的字典按start值从小到大排序,为sorted_combo列表
             valid_combos.append([tuple(sp['edges']) for sp in sorted_combo])
-            # 将一组没有公共链路的(子路径元组,子路径元组中每个小元组代表一条弧)
+            # 将一组没有公共链路的子路径元组(子路径元组中每个小元组代表一条弧)
             # 构成一个列表,将列表添加到valid_combos列表中
             # 一个列表代表一种子路径组合
     return valid_combos
