@@ -2,75 +2,83 @@ from collections import deque
 
 
 def find_all_valid_paths(graph, start, end, shortest_length, max_extra_steps):
+    """改进后的安全路径搜索函数"""
     """
-    高效查找所有从起点到终点且长度不超过最短路径+M步的路径
+        高效查找所有从起点到终点且长度不超过最短路径+M步的路径
 
-    参数：
-    graph : List[List[int]] - 邻接矩阵
-    start : int - 起点编号（从1开始）
-    end : int - 终点编号（从1开始）
-    shortest_length : int - 最短路径长度（基于节点编号从1开始）
-    max_extra_steps : int - 允许的最大额外步数(M)
+        参数：
+        graph : List[List[int]] - 邻接矩阵
+        start : int - 起点编号（从1开始）
+        end : int - 终点编号（从1开始）
+        shortest_length : int - 最短路径长度（基于节点编号从1开始）
+        max_extra_steps : int - 允许的最大额外步数(M)
 
-    返回：
-    List[List[int]] - 所有有效路径集合，按节点数升序排列，路径中的节点编号从1开始
+        返回：
+        List[List[int]] - 所有有效路径集合，按节点数升序排列，路径中的节点编号从1开始
     """
-
-    # 节点编号转换（输入1-based转0-based）[^1]
     start_node = start - 1
     end_node = end - 1
-
     max_steps = shortest_length + max_extra_steps
-    visited_records = {}
-    path_queue = deque()
-    path_queue.append((start_node, [start_node]))
-
+    visited_records = set()  # 改用集合提高查询效率
+    path_queue = deque([(start_node, [start_node])])
     valid_paths = []
 
     while path_queue:
         current_node, current_path = path_queue.popleft()
 
-        # 终点判断使用转换后节点[^2]
         if current_node == end_node:
-            # 输出前转回1-based编号[^3]
             valid_paths.append([x + 1 for x in current_path])
             continue
 
         if len(current_path) > max_steps:
             continue
 
-        for neighbor in get_valid_neighbors(graph, current_node):
-            if neighbor in current_path:
-                continue
+        # 生成唯一路径特征防止重复探索[^4]
+        path_signature = (current_node, frozenset(current_path))
+        if path_signature in visited_records:
+            continue
+        visited_records.add(path_signature)
 
-            path_key = (neighbor, tuple(current_path))
-            if path_key not in visited_records:
+        for neighbor in get_valid_neighbors(graph, current_node):
+            if neighbor not in current_path:
                 new_path = current_path + [neighbor]
                 path_queue.append((neighbor, new_path))
-                visited_records[path_key] = True
 
     return valid_paths
 
+
 def get_valid_neighbors(graph, node):
-    """获取有效邻居节点"""
+    """添加边界检查的邻居获取"""
+    if node < 0 or node >= len(graph):
+        return []
     return [i for i, val in enumerate(graph[node]) if val == 1]
+
 
 if __name__ == "__main__":
     # 定义4节点图的邻接矩阵
     adj_matrix = [
-        [0, 1, 1, 0],  # Node 1
-        [1, 0, 1, 0],  # Node 2
-        [1, 1, 0, 1],  # Node 3
-        [0, 0, 1, 0]  # Node 4
-    ]
+    [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0],
+    [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0],
+    [0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0],
+    [0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+]
 
     # 查找从节点1到4的所有路径（已知最短步数=2，允许额外1步）
     paths = find_all_valid_paths(
         graph=adj_matrix,
-        start=1,
-        end=4,
-        shortest_length=2,
-        max_extra_steps=1
+        start=4,
+        end=2,
+        shortest_length=4,
+        max_extra_steps=2
     )
 
     # 输出结果（每个子列表对应一条路径）

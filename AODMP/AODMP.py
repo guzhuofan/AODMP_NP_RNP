@@ -1,6 +1,6 @@
 from typing import List, Union
-from dijkstra_shortest_path import dijkstra_shortest_path
-from find_all_valid_paths import find_all_valid_paths,get_valid_neighbors
+from AODMP.dijkstra_shortest_path import dijkstra_shortest_path
+from AODMP.find_all_valid_paths import find_all_valid_paths,get_valid_neighbors
 
 
 def aodmp(graph: List[List[int]], od_pairs: List[List[int]], max_extra_steps: int) -> List[List[int]]:
